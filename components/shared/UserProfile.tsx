@@ -35,6 +35,11 @@ type Props = {
   };
 };
 
+type UpdateResponse = {
+  ok: boolean;
+  message: string;
+};
+
 export default function UserProfile({ btnTitle, userDetails, heading }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -65,12 +70,21 @@ export default function UserProfile({ btnTitle, userDetails, heading }: Props) {
     }
 
     const body = {
+      id: userDetails.id,
       bio: values.bio,
       username: values.username,
       image: values.profile_photo,
     };
 
-    const response = await axios.put("/api/users/profile", body);
+    const response: UpdateResponse = await axios.put(
+      "/api/users/profile",
+      body
+    );
+
+    toast({
+      title: response.ok ? "Successful" : "Unsuccessful",
+      description: response.message,
+    });
 
     if (pathname === "/profile/edit") {
       router.back();

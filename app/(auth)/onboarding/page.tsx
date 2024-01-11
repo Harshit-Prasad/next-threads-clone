@@ -13,6 +13,10 @@ export default async function page() {
 
   const user: any = await getUserDetails(data.id);
 
+  if (user?.data?.onboarded) {
+    redirect("/");
+  }
+
   const userDetails = {
     id: user?.data?._id?.toString(),
     bio: user.data.bio,
@@ -20,10 +24,6 @@ export default async function page() {
     profile_photo: user.data.profile_photo,
     onboarded: user.data.onboarded,
   };
-
-  if (user?.onboarded) {
-    redirect("/");
-  }
 
   return (
     <>
