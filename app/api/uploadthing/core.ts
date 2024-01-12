@@ -1,9 +1,9 @@
-import dataFromToken from "@/lib/helpers/dataFromToken";
+import getDataFromToken from "@/lib/helpers/getDataFromToken";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 
 const f = createUploadthing();
 
-const getUser = async () => await dataFromToken();
+const getUser = async () => await getDataFromToken();
 
 export const ourFileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug

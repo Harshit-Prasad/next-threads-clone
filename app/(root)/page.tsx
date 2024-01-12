@@ -1,10 +1,10 @@
-import dataFromToken from "@/lib/helpers/dataFromToken";
 import { redirect } from "next/navigation";
+import { useAuth } from "@/lib/store";
 
 export default async function Home() {
-  const user = await dataFromToken();
+  const { id } = useAuth.getState();
 
-  if (!user) {
+  if (id === "") {
     redirect("/login");
   }
 

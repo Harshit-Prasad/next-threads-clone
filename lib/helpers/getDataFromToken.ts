@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 
-export default async function dataFromToken() {
+export default function getDataFromToken() {
   try {
     const cookieStore = cookies();
     const token = cookieStore.get("token")?.value;
