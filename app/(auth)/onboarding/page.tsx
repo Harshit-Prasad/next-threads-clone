@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import UserProfile from "@/components/shared/UserProfile";
+import UserDetails from "@/components/shared/UserDetails";
 import { getUserDetails } from "@/lib/actions/getUserDetails";
 import getDataFromToken from "@/lib/helpers/getDataFromToken";
 
@@ -22,12 +22,12 @@ export default async function page() {
     bio: user.data.bio,
     username: user.data.username,
     profile_photo: user.data.profile_photo,
-    onboarded: user.data.onboarded,
   };
 
   return (
     <>
-      <UserProfile
+      <h1 className="head-text py-3 sm:pb-5">Onboarding</h1>
+      <UserDetails
         userDetails={userDetails}
         heading="Onboarding"
         btnTitle="Continue"

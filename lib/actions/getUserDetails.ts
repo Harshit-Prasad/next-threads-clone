@@ -17,8 +17,6 @@ export async function getUserDetails(userId: string) {
 
     return {
       data: user,
-      success: true,
-      message: "User found",
     };
   } catch (error: any) {
     return { error: error.message, status: 500 };
