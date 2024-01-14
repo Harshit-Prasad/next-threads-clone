@@ -15,16 +15,23 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please provide a password"],
     },
-    onboarded: {
-      type: Boolean,
-      default: false,
-    },
+
     profile_photo: {
       type: String,
       default:
         "https://utfs.io/f/61f87d75-9dec-4df6-aa50-40f5f2abe841-33czoe.svg",
     },
     bio: String,
+    threads: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Thread",
+      },
+    ],
+    onboarded: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

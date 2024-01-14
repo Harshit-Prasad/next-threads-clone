@@ -1,6 +1,6 @@
 import UserProfile from "@/components/shared/UserProfile";
 import { getUserDetails } from "@/lib/actions/getUserDetails";
-import { useAuth } from "@/lib/store";
+import getDataFromToken from "@/lib/helpers/getDataFromToken";
 import { redirect } from "next/navigation";
 
 export default async function page({
@@ -8,7 +8,7 @@ export default async function page({
 }: {
   params: { id: string };
 }) {
-  const { id: currentUser } = useAuth.getState();
+  const { id: currentUser } = await getDataFromToken();
 
   if (currentUser === "") {
     redirect("/login");

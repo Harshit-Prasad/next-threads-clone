@@ -108,7 +108,7 @@ export default function page() {
             )}
           />
 
-          <Button className="bg-primary-500" type="submit">
+          <Button className="bg-primary-500 text-light-2" type="submit">
             Login
           </Button>
           <p className="text-light-2">

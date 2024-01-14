@@ -201,7 +201,7 @@ export default function UserDetails({ btnTitle, userDetails }: Props) {
             )}
           />
 
-          <Button className="bg-primary-500" type="submit">
+          <Button className="bg-primary-500 text-light-2" type="submit">
             {btnTitle}
           </Button>
         </form>
