@@ -13,10 +13,10 @@ import { Input } from "@/components/ui/input";
 import { signupSchema } from "@/lib/validations/user.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { signup } from "@/lib/actions/user.actions";
 
 export default function page({}) {
   const router = useRouter();
@@ -42,21 +42,14 @@ export default function page({}) {
         password,
       };
 
-      const response = await axios.post("/api/users/signup", body);
+      const data = await signup(body);
 
-      if (response.data.success) {
-        toast({
-          title: "Success",
-          description: response.data.message,
-        });
+      toast({
+        title: data.success ? "Success" : "Error",
+        description: data.success ? data.message : data.error,
+      });
 
-        router.push("/login");
-      } else {
-        toast({
-          title: "Error",
-          description: response.data.error,
-        });
-      }
+      router.push("/login");
     } catch (error: any) {
       toast({
         title: "Error",

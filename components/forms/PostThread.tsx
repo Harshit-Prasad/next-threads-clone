@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 import {
   Form,
@@ -17,11 +17,11 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
 import { ThreadValidation } from "@/lib/validations/thread.validation";
-import axios from "axios";
+import { createThread } from "@/lib/actions/thread.actions";
 
-interface Props {
+type Props = {
   userId: string;
-}
+};
 
 export default function PostThread({ userId }: Props) {
   const router = useRouter();
@@ -39,11 +39,11 @@ export default function PostThread({ userId }: Props) {
     try {
       const body = {
         content: values.thread,
-        author: userId,
+        author: values.accountId,
         path: pathname,
       };
 
-      await axios.post("/api/threads/create", body);
+      await createThread(body);
 
       router.push("/");
     } catch (error: any) {
@@ -73,7 +73,7 @@ export default function PostThread({ userId }: Props) {
           )}
         />
 
-        <Button type="submit" className="bg-primary-500">
+        <Button type="submit" className="bg-primary-500 text-light-2">
           Post Thread
         </Button>
       </form>

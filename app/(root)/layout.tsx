@@ -23,7 +23,7 @@ export default async function RootLayout({
 }) {
   const user = await getDataFromToken();
 
-  useAuth.setState({ id: user.id });
+  useAuth.setState({ id: user?.id });
 
   return (
     <html lang="en">
@@ -31,7 +31,7 @@ export default async function RootLayout({
         className={`${inter.className} bg-dark-1
       `}
       >
-        <AuthProvider id={user.id} />
+        <AuthProvider id={user?.id} />
         <Topbar />
         <main className="flex flex-row">
           <LeftSidebar />

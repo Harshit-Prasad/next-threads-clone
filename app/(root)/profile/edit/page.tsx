@@ -1,10 +1,16 @@
 import UserDetails from "@/components/shared/UserDetails";
-import { getUserDetails } from "@/lib/actions/getUserDetails";
-import { useAuth } from "@/lib/store";
+import { getUserDetails } from "@/lib/actions/user.actions";
+import getDataFromToken from "@/lib/helpers/getDataFromToken";
+import { redirect } from "next/navigation";
 
 export default async function page() {
-  const { id } = useAuth.getState();
-  const { data } = await getUserDetails(id);
+  const { id } = await getDataFromToken();
+
+  if (!id) redirect("/login");
+
+  const data = await getUserDetails(id);
+
+  if (!data.onboarded) redirect("/onboarding");
 
   const userDetails = {
     id: data?.id,

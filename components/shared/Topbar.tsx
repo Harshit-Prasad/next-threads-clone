@@ -5,6 +5,7 @@ import axios from "axios";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { logout } from "@/lib/actions/user.actions";
 
 export default function Topbar() {
   const { toast } = useToast();
@@ -12,12 +13,10 @@ export default function Topbar() {
 
   async function handleLogout() {
     try {
-      const response: { ok: boolean; message: string } = await axios.get(
-        "/api/users/logout"
-      );
+      const data: { success: boolean; message: string } = await logout();
       toast({
         title: "Success",
-        description: response.message,
+        description: data.message,
       });
       router.push("/login");
     } catch (error: any) {

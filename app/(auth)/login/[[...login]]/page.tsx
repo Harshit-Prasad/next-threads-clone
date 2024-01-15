@@ -12,12 +12,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { loginSchema } from "@/lib/validations/user.validation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { login } from "@/lib/actions/user.actions";
 
 export default function page() {
   const router = useRouter();
@@ -40,27 +40,20 @@ export default function page() {
         password,
       };
 
-      const response = await axios.post("/api/users/login", body);
+      const data = await login(body);
 
-      if (response.data.success) {
-        toast({
-          title: "Success",
-          description: response.data.message,
-        });
+      toast({
+        title: data.success ? "Success" : "Error",
+        description: data.success ? data.message : data.error,
+      });
 
-        router.push("/onboarding");
-      } else {
-        toast({
-          title: "Error",
-          description: response.data.error,
-        });
-      }
+      router.push("/onboarding");
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.messgae,
       });
-      throw new Error("Couldn't save user in the DB");
+      throw new Error("Something went wrong");
     }
 
     form.reset();

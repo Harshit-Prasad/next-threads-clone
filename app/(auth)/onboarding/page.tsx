@@ -1,27 +1,27 @@
 import { redirect } from "next/navigation";
 
 import UserDetails from "@/components/shared/UserDetails";
-import { getUserDetails } from "@/lib/actions/getUserDetails";
+import { getUserDetails } from "@/lib/actions/user.actions";
 import getDataFromToken from "@/lib/helpers/getDataFromToken";
 
 export default async function page() {
-  const data: any = await getDataFromToken();
+  const user: any = await getDataFromToken();
 
-  if (!data) {
+  if (!user) {
     redirect("/login");
   }
 
-  const user: any = await getUserDetails(data.id);
+  const data: any = await getUserDetails(user.id);
 
-  if (user?.data?.onboarded) {
+  if (data?.onboarded) {
     redirect("/");
   }
 
   const userDetails = {
-    id: user?.data?._id?.toString(),
-    bio: user.data.bio,
-    username: user.data.username,
-    profile_photo: user.data.profile_photo,
+    id: data?._id?.toString(),
+    bio: data.bio,
+    username: data.username,
+    profile_photo: data.profile_photo,
   };
 
   return (

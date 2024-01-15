@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
     profile_photo: {
       type: String,
       default:
-        "https://utfs.io/f/61f87d75-9dec-4df6-aa50-40f5f2abe841-33czoe.svg",
+        "https://utfs.io/f/b09d3812-f9cc-41d5-a2e6-e49cbf37825d-33czoe.svg",
     },
     bio: String,
     threads: [

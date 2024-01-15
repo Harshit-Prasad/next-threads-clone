@@ -1,0 +1,162 @@
+"use server";
+import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
+
+import User from "@/lib/models/user.model";
+import { connectDB } from "@/lib/db";
+
+type SignupParams = {
+  username: string;
+  email: string;
+  password: string;
+};
+
+type LoginParams = {
+  email: string;
+  password: string;
+};
+
+type CreateProfileParams = {
+  id: string;
+  bio: string;
+  username: string;
+  image: string;
+  path: string;
+};
+
+export async function signup({ username, email, password }: SignupParams) {
+  try {
+    connectDB();
+
+    const user = await User.findOne({ email });
+    if (user) {
+      return { error: "User already exsists", success: false };
+    }
+
+    const salt = await bcryptjs.genSalt(10);
+    const hashedPassword = await bcryptjs.hash(password, salt);
+
+    // Saving new User
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+    });
+    const savedUser = await newUser.save();
+
+    return {
+      message: "User created successfully",
+      success: true,
+    };
+  } catch (error: any) {
+    throw new Error(`Signup failed: ${error.message}`);
+  }
+}
+
+export async function login({ email, password }: LoginParams) {
+  try {
+    connectDB();
+
+    const cookieStore = cookies();
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return { error: "User does not exist" };
+    }
+
+    const validPassword = await bcryptjs.compare(password, user.password);
+    if (!validPassword) {
+      return { error: "Invalid password" };
+    }
+
+    const tokenData = {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+    };
+    const token = await jwt.sign(tokenData, process.env.JWT_SECRET!, {
+      expiresIn: "1d",
+    });
+
+    cookieStore.set("token", token, {
+      httpOnly: true,
+      expires: Date.now() + 24 * 60 * 60 * 1000,
+    });
+
+    return {
+      message: "Login successful",
+      success: true,
+    };
+  } catch (error: any) {
+    throw new Error(`Login failed: ${error.message}`);
+  }
+}
+
+export async function logout() {
+  try {
+    const cookieStore = cookies();
+
+    cookieStore.delete("token");
+
+    return {
+      message: "Logout successful",
+      success: true,
+    };
+  } catch (error: any) {
+    throw new Error(`Logout failed: ${error.message}`);
+  }
+}
+
+export async function createProfile({
+  id,
+  bio,
+  username,
+  image,
+  path,
+}: CreateProfileParams) {
+  try {
+    connectDB();
+
+    const updateUser = await User.findOneAndUpdate(
+      { _id: id },
+      {
+        onboarded: true,
+        bio: bio,
+        username: username,
+        profile_photo: image,
+      },
+      { upsert: true }
+    );
+
+    if (path === "/profile/edit") {
+      revalidatePath(path);
+    }
+
+    return {
+      success: true,
+      message: "User profile created.",
+    };
+  } catch (error: any) {
+    throw new Error(`Onboarding failed: ${error.message}`);
+  }
+}
+
+export async function getUserDetails(userId: string) {
+  try {
+    connectDB();
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return {
+        error: "User does not exist",
+        status: 400,
+      };
+    }
+
+    return user;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch user details: ${error.message}`);
+  }
+}

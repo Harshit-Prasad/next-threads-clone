@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { profileSchema } from "@/lib/validations/user.validation";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
@@ -22,6 +21,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { isBase64Image } from "@/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing";
+import { createProfile } from "@/lib/actions/user.actions";
 
 type Props = {
   btnTitle: string;
@@ -35,7 +35,7 @@ type Props = {
 };
 
 type UpdateResponse = {
-  ok: boolean;
+  success: boolean;
   message: string;
 };
 
@@ -76,13 +76,10 @@ export default function UserDetails({ btnTitle, userDetails }: Props) {
       path: pathname,
     };
 
-    const response: UpdateResponse = await axios.put(
-      "/api/users/profile",
-      body
-    );
+    const response: UpdateResponse = await createProfile(body);
 
     toast({
-      title: response.ok ? "Successful" : "Unsuccessful",
+      title: response.success ? "Successful" : "Unsuccessful",
       description: response.message,
     });
 

@@ -1,8 +1,8 @@
-import { useAuth } from "@/lib/store";
+import getDataFromToken from "@/lib/helpers/getDataFromToken";
 import { redirect } from "next/navigation";
 
-export default function page() {
-  const { id } = useAuth.getState();
+export default async function page() {
+  const { id } = await getDataFromToken();
 
   if (id) {
     redirect(`/profile/${id}`);

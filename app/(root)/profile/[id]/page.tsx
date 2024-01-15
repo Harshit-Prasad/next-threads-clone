@@ -1,5 +1,5 @@
 import UserProfile from "@/components/shared/UserProfile";
-import { getUserDetails } from "@/lib/actions/getUserDetails";
+import { getUserDetails } from "@/lib/actions/user.actions";
 import getDataFromToken from "@/lib/helpers/getDataFromToken";
 import { redirect } from "next/navigation";
 
@@ -10,7 +10,7 @@ export default async function page({
 }) {
   const { id: currentUser } = await getDataFromToken();
 
-  if (currentUser === "") {
+  if (!currentUser) {
     redirect("/login");
   }
 
@@ -18,14 +18,15 @@ export default async function page({
 
   const userProfile = {
     currentUser,
-    profileUser: user?.data?._id?.toString(),
-    bio: user?.data?.bio,
-    username: user?.data?.username,
-    profile_photo: user?.data?.profile_photo,
+    profileUser: user?._id?.toString(),
+    bio: user?.bio,
+    username: user?.username,
+    profile_photo: user?.profile_photo,
   };
 
   return (
     <>
+      <h1 className="head-text text-light-1">Profile</h1>
       <UserProfile {...userProfile} />
     </>
   );
