@@ -5,7 +5,7 @@ import LeftSidebar from "@/components/shared/LeftSidebar";
 import RightSidebar from "@/components/shared/RightSidebar";
 import Bottombar from "@/components/shared/Bottombar";
 import "../globals.css";
-import getDataFromToken from "@/lib/helpers/getDataFromToken";
+import { getCurrentUser } from "@/lib/actions/user.actions";
 import AuthProvider from "@/provider/AuthProvider";
 import { useAuth } from "@/lib/store";
 
@@ -21,7 +21,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getDataFromToken();
+  const user = await getCurrentUser();
 
   useAuth.setState({ id: user?.id });
 

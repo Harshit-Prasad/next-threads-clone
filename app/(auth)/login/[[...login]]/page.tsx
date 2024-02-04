@@ -65,7 +65,7 @@ export default function page() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full sm:w-[450px] rounded-[1em] flex flex-col justify-start gap-10 bg-dark-3 p-5 sm:p-10"
+          className=" w-full sm:w-[450px] rounded-[1em] flex flex-col justify-start gap-10 bg-dark-3 p-5 sm:p-10"
         >
           <FormField
             control={form.control}

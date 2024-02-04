@@ -2,8 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { connectDB } from "@/lib/db";
-import Thread from "@/lib/models/thread.model";
-import User from "../models/user.model";
+import Thread, { ThreadType } from "@/lib/models/thread.model";
+import User, { UserType } from "../models/user.model";
+import { getErrorMessage } from "../helpers/getErrorMessage";
 
 type CreateThreadParams = {
   content: string;
@@ -82,12 +83,18 @@ export async function commentThread({
   }
 }
 
-export async function getThreads() {
+export async function getThreads(pageNumber = 1, pageSize = 4) {
   try {
     connectDB();
 
-    const threads = await Thread.find({ parentId: { $in: [null, undefined] } })
+    const skipAmount = (pageNumber - 1) * pageSize;
+
+    const threads: ThreadType[] = await Thread.find({
+      parentId: { $in: [null, undefined] },
+    })
       .sort({ createdAt: "desc" })
+      .skip(skipAmount)
+      .limit(pageSize)
       .populate({
         path: "author",
         model: User,
@@ -102,9 +109,13 @@ export async function getThreads() {
         },
       });
 
-    return threads;
-  } catch (error: any) {
-    return { error: error.message, status: 500 };
+    await new Promise((res) => setTimeout(res, 500));
+
+    return JSON.parse(JSON.stringify(threads));
+  } catch (error) {
+    return {
+      error: getErrorMessage(error),
+    };
   }
 }
 

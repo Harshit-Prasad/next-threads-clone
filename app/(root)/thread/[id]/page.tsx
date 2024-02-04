@@ -1,16 +1,16 @@
 import { getThread } from "@/lib/actions/thread.actions";
-import getDataFromToken from "@/lib/helpers/getDataFromToken";
 import { redirect } from "next/navigation";
 import ThreadCard from "@/components/cards/ThreadCard";
 import Comment from "@/components/forms/Comment";
-import { getUserDetails } from "@/lib/actions/user.actions";
+import { getCurrentUser, getUserDetails } from "@/lib/actions/user.actions";
+import { ThreadType } from "@/lib/models/thread.model";
 
 export default async function page({
   params: { id },
 }: {
   params: { id: string };
 }) {
-  const { id: currentUserId } = await getDataFromToken();
+  const { id: currentUserId } = await getCurrentUser();
 
   const data = await getUserDetails(currentUserId);
 
@@ -42,7 +42,7 @@ export default async function page({
       </div>
 
       <div className="mt-10">
-        {thread.children.map((childItem: any) => (
+        {thread.children.map((childItem: ThreadType) => (
           <ThreadCard
             key={childItem._id}
             id={childItem._id}

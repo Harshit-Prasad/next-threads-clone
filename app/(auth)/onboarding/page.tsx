@@ -1,11 +1,10 @@
 import { redirect } from "next/navigation";
 
 import UserDetails from "@/components/shared/UserDetails";
-import { getUserDetails } from "@/lib/actions/user.actions";
-import getDataFromToken from "@/lib/helpers/getDataFromToken";
+import { getUserDetails, getCurrentUser } from "@/lib/actions/user.actions";
 
 export default async function page() {
-  const user: any = await getDataFromToken();
+  const user: any = await getCurrentUser();
 
   if (!user) {
     redirect("/login");

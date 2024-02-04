@@ -3,9 +3,10 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-
 import User from "@/lib/models/user.model";
 import { connectDB } from "@/lib/db";
+import Thread from "../models/thread.model";
+import { FilterQuery } from "mongoose";
 
 type SignupParams = {
   username: string;
@@ -25,6 +26,30 @@ type CreateProfileParams = {
   image: string;
   path: string;
 };
+
+type GetUserParams = {
+  searchString: string;
+  userId: string;
+};
+
+export async function getCurrentUser() {
+  try {
+    const cookieStore = cookies();
+    const token = cookieStore.get("token")?.value;
+
+    if (!token) {
+      return null;
+    }
+
+    const decodedToken: any = jwt.verify(token, process.env.JWT_SECRET!);
+
+    if (decodedToken.id) {
+      return decodedToken;
+    }
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}
 
 export async function signup({ username, email, password }: SignupParams) {
   try {
@@ -158,5 +183,63 @@ export async function getUserDetails(userId: string) {
     return user;
   } catch (error: any) {
     throw new Error(`Failed to fetch user details: ${error.message}`);
+  }
+}
+
+export async function getComments(userId: string) {
+  try {
+    connectDB();
+
+    const threads = await Thread.find({ author: userId });
+
+    const threadChildren = threads.reduce((acc, thread) => {
+      return acc.concat(thread.children);
+    }, []);
+
+    const comments = await Thread.find({
+      _id: { $in: threadChildren },
+      author: { $ne: userId },
+    }).populate({
+      path: "author",
+      model: User,
+      select: "profile_photo username",
+    });
+
+    return comments;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch comments details: ${error.message}`);
+  }
+}
+
+export async function getUsers({ searchString = "", userId }: GetUserParams) {
+  try {
+    if (searchString.trim() === "") {
+      return [];
+    }
+
+    connectDB();
+
+    const regex = new RegExp(searchString, "i");
+
+    const query: FilterQuery<typeof User> = {
+      _id: { $ne: userId },
+    };
+
+    if (searchString.trim() !== "") {
+      query.$or = [
+        {
+          username: { $regex: regex },
+        },
+        {
+          email: { $regex: regex },
+        },
+      ];
+    }
+
+    const users = await User.find(query).sort({ createdAt: "desc" });
+
+    return users;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch requested users: ${error.message}`);
   }
 }

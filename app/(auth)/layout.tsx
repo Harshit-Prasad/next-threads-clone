@@ -9,17 +9,17 @@ export const metadata = {
   description: "User authentication and onboarding.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} bg-dark-1 min-h-dvh flex flex-col justify-center items-center`}
-      >
-        {children}
+      <body className={`${inter.className}`}>
+        <main className="bg-dark-1 min-h-dvh flex flex-col justify-center items-center px-4 sm:px-0">
+          {children}
+        </main>
         <Toaster />
       </body>
     </html>

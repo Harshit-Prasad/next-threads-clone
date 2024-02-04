@@ -1,4 +1,18 @@
 import mongoose from "mongoose";
+import { ThreadType } from "./thread.model";
+
+export type UserType = {
+  _id: string;
+  username: string;
+  email: string;
+  password?: string;
+  profile_photo: string;
+  bio: string;
+  onboarded: boolean;
+  threads: ThreadType;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 const userSchema = new mongoose.Schema(
   {

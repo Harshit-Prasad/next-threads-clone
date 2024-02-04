@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import axios from "axios";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { logout } from "@/lib/actions/user.actions";
+import { useAuth } from "@/lib/store";
 
 export default function Topbar() {
   const { toast } = useToast();
@@ -14,6 +14,7 @@ export default function Topbar() {
   async function handleLogout() {
     try {
       const data: { success: boolean; message: string } = await logout();
+      useAuth.setState({ id: "" });
       toast({
         title: "Success",
         description: data.message,

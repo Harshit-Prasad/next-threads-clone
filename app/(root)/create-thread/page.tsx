@@ -1,11 +1,10 @@
 import { redirect } from "next/navigation";
 
 import PostThread from "@/components/forms/PostThread";
-import getDataFromToken from "@/lib/helpers/getDataFromToken";
-import { getUserDetails } from "@/lib/actions/user.actions";
+import { getCurrentUser, getUserDetails } from "@/lib/actions/user.actions";
 
 async function Page() {
-  const user = await getDataFromToken();
+  const user = await getCurrentUser();
   if (!user) redirect("/login");
 
   const userDetails = await getUserDetails(user.id);

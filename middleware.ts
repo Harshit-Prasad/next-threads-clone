@@ -7,20 +7,28 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value || "";
 
   if (isPublicPath && token) {
-    return NextResponse.redirect(new URL("/onboarding", request.nextUrl));
+    console.log("onboarding");
+    return NextResponse.redirect(new URL("/onboarding", request.url));
   }
 
   if (!isPublicPath && !token) {
-    return NextResponse.redirect(new URL("/login", request.nextUrl));
+    console.log("login");
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 }
 
 export const config = {
   matcher: [
     "/",
-    "/onboarding",
+    "/thread",
+    "/thread/:path",
+    "/search",
+    "/activity",
+    "/create-thread",
     "/profile",
-    "/profile/:path*",
+    "/profile/edit",
+    "/profile/:path",
+    "/onboarding",
     "/login",
     "/signup",
   ],

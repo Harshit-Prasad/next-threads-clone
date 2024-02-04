@@ -1,45 +1,50 @@
 import { redirect } from "next/navigation";
-import getDataFromToken from "@/lib/helpers/getDataFromToken";
 import { getThreads } from "@/lib/actions/thread.actions";
 import ThreadCard from "@/components/cards/ThreadCard";
-import { getUserDetails } from "@/lib/actions/user.actions";
+import { getCurrentUser, getUserDetails } from "@/lib/actions/user.actions";
+import ErrorCard from "@/components/cards/ErrorCard";
+import HomeThreadsInfiniteScrolling from "@/components/infinite-scrolling/HomeThreadsInfiniteScrolling";
+import { ThreadType } from "@/lib/models/thread.model";
 
 export default async function Home() {
-  const { id } = await getDataFromToken();
+  const user = await getCurrentUser();
 
-  if (!id) {
+  if (!user?.id) {
     redirect("/login");
   }
 
-  const user = await getUserDetails(id);
+  const userDetails = await getUserDetails(user?.id);
 
-  if (!user.onboarded) {
+  if (!userDetails.onboarded) {
     redirect("/onboarding");
   }
 
   const result: any = await getThreads();
 
+  if (result?.error) {
+    const { error } = result;
+    return <ErrorCard error={error} />;
+  }
+
+  const initialThreads = result.map((thread: ThreadType, index: number) => {
+    return (
+      <ThreadCard
+        key={thread._id}
+        id={thread._id.toString()}
+        content={thread.content}
+        author={thread.author}
+        comments={thread.children}
+        index={index}
+      />
+    );
+  });
+
   return (
     <>
       <h1 className="text-light-2 head-text">Home</h1>
       <section className="mt-9 flex flex-col gap-10">
-        {result.length === 0 ? (
-          <p className="no-result">No threads found</p>
-        ) : (
-          <>
-            {result.map((post: any) => (
-              <ThreadCard
-                key={post._id}
-                id={post._id.toString()}
-                currentUserId={id}
-                parentId={post.parentId}
-                content={post.content}
-                author={post.author}
-                comments={post.children}
-              />
-            ))}
-          </>
-        )}
+        {result.length === 0 && <p className="no-result">No threads found</p>}
+        <HomeThreadsInfiniteScrolling initialThreads={initialThreads} />
       </section>
     </>
   );

@@ -1,22 +1,29 @@
+import { ThreadType } from "@/lib/models/thread.model";
+import { UserType } from "@/lib/models/user.model";
+import { MotionArticle } from "@/lib/motion";
 import Image from "next/image";
 import Link from "next/link";
 
 type Props = {
   id: string;
-  currentUserId: string;
-  parentId: string | null;
+  currentUserId?: string;
+  parentId?: string | null;
   content: string;
-  author: {
-    username: string;
-    profile_photo: string;
-    id: string;
-  };
-  comments: {
-    author: {
-      profile_photo: string;
-    };
-  }[];
+  author: UserType;
+  comments: ThreadType[];
   isComment?: boolean;
+  index: number;
+};
+
+const variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.9,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+  },
 };
 
 export default function ThreadCard({
@@ -27,9 +34,20 @@ export default function ThreadCard({
   author,
   comments,
   isComment,
+  index = 1,
 }: Props) {
   return (
-    <article
+    <MotionArticle
+      key={id}
+      variants={variants}
+      initial="hidden"
+      animate="visible"
+      transition={{
+        delay: index * 0.3,
+        ease: "easeInOut",
+        duration: 0.5,
+      }}
+      viewport={{ amount: 0 }}
       className={`flex w-full flex-col rounded-xl ${
         isComment ? "px-0 xs:px-7" : "bg-dark-2 p-7"
       }`}
@@ -37,7 +55,10 @@ export default function ThreadCard({
       <div className="flex items-start justify-between">
         <div className="flex w-full flex-1 flex-row gap-4">
           <div className="flex flex-col items-center">
-            <Link href={`/profile/${author.id}`} className="relative h-11 w-11">
+            <Link
+              href={`/profile/${author._id}`}
+              className="relative h-11 w-11"
+            >
               <Image
                 src={author.profile_photo}
                 alt="user_community_image"
@@ -50,7 +71,7 @@ export default function ThreadCard({
           </div>
 
           <div className="flex w-full flex-col">
-            <Link href={`/profile/${author.id}`} className="w-fit">
+            <Link href={`/profile/${author._id}`} className="w-fit">
               <h4 className="cursor-pointer text-base-semibold text-light-1">
                 {author.username}
               </h4>
@@ -124,6 +145,6 @@ export default function ThreadCard({
           </Link>
         </div>
       )}
-    </article>
+    </MotionArticle>
   );
 }

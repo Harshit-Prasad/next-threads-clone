@@ -1,11 +1,11 @@
-import getDataFromToken from "@/lib/helpers/getDataFromToken";
+import { getCurrentUser } from "@/lib/actions/user.actions";
 import { redirect } from "next/navigation";
 
 export default async function page() {
-  const { id } = await getDataFromToken();
+  const user = await getCurrentUser();
 
-  if (id) {
-    redirect(`/profile/${id}`);
+  if (user?.id) {
+    redirect(`/profile/${user?.id}`);
   } else {
     redirect("/login");
   }
