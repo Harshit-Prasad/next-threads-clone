@@ -12,7 +12,7 @@ type Props = {
   author: UserType;
   comments: ThreadType[];
   isComment?: boolean;
-  index: number;
+  index?: number;
 };
 
 const variants = {
