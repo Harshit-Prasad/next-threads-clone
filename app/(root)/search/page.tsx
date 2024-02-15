@@ -1,7 +1,10 @@
 import UserCard from "@/components/cards/UserCard";
 import Searchbar from "@/components/forms/Searchbar";
-import { getUserDetails, getUsers } from "@/lib/actions/user.actions";
-import { useAuth } from "@/lib/store";
+import {
+  getCurrentUser,
+  getUserDetails,
+  getUsers,
+} from "@/lib/actions/user.actions";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -10,7 +13,7 @@ type Params = {
 };
 
 export default async function page({ searchParams: { q = "" } }: Params) {
-  const user = useAuth.getState();
+  const user = await getCurrentUser();
 
   if (!user?.id) redirect("/login");
 
