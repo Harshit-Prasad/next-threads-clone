@@ -1,9 +1,11 @@
 import UserDetails from "@/components/shared/UserDetails";
 import { getCurrentUser, getUserDetails } from "@/lib/actions/user.actions";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function page() {
-  const { id } = await getCurrentUser();
+  const cookieStore = cookies();
+  const { id } = await getCurrentUser(cookieStore);
 
   if (!id) redirect("/login");
 

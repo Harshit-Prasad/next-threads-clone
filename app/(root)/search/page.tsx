@@ -5,6 +5,7 @@ import {
   getUserDetails,
   getUsers,
 } from "@/lib/actions/user.actions";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -13,7 +14,8 @@ type Params = {
 };
 
 export default async function page({ searchParams: { q = "" } }: Params) {
-  const user = await getCurrentUser();
+  const cookieStore = cookies();
+  const user = await getCurrentUser(cookieStore);
 
   if (!user?.id) redirect("/login");
 

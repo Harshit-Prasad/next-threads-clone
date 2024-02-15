@@ -5,9 +5,11 @@ import { getCurrentUser, getUserDetails } from "@/lib/actions/user.actions";
 import ErrorCard from "@/components/cards/ErrorCard";
 import HomeThreadsInfiniteScrolling from "@/components/infinite-scrolling/HomeThreadsInfiniteScrolling";
 import { ThreadType } from "@/lib/models/thread.model";
+import { cookies } from "next/headers";
 
 export default async function Home() {
-  const user = await getCurrentUser();
+  const cookieStore = cookies();
+  const user = await getCurrentUser(cookieStore);
 
   if (!user?.id) {
     redirect("/login");

@@ -4,13 +4,15 @@ import ThreadCard from "@/components/cards/ThreadCard";
 import Comment from "@/components/forms/Comment";
 import { getCurrentUser, getUserDetails } from "@/lib/actions/user.actions";
 import { ThreadType } from "@/lib/models/thread.model";
+import { cookies } from "next/headers";
 
 export default async function page({
   params: { id },
 }: {
   params: { id: string };
 }) {
-  const { id: currentUserId } = await getCurrentUser();
+  const cookieStore = cookies();
+  const { id: currentUserId } = await getCurrentUser(cookieStore);
 
   const data = await getUserDetails(currentUserId);
 

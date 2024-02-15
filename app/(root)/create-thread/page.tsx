@@ -2,9 +2,12 @@ import { redirect } from "next/navigation";
 
 import PostThread from "@/components/forms/PostThread";
 import { getCurrentUser, getUserDetails } from "@/lib/actions/user.actions";
+import { cookies } from "next/headers";
 
 async function Page() {
-  const user = await getCurrentUser();
+  const cookieStore = cookies();
+
+  const user = await getCurrentUser(cookieStore);
   if (!user) redirect("/login");
 
   const userDetails = await getUserDetails(user.id);

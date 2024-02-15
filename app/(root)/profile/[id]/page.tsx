@@ -1,5 +1,6 @@
 import UserProfile from "@/components/shared/UserProfile";
 import { getCurrentUser, getUserDetails } from "@/lib/actions/user.actions";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function page({
@@ -7,7 +8,8 @@ export default async function page({
 }: {
   params: { id: string };
 }) {
-  const { id: currentUser } = await getCurrentUser();
+  const cookieStore = cookies();
+  const { id: currentUser } = await getCurrentUser(cookieStore);
 
   if (!currentUser) {
     redirect("/login");

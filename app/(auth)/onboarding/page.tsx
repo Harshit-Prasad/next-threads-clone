@@ -2,9 +2,11 @@ import { redirect } from "next/navigation";
 
 import UserDetails from "@/components/shared/UserDetails";
 import { getUserDetails, getCurrentUser } from "@/lib/actions/user.actions";
+import { cookies } from "next/headers";
 
 export default async function page() {
-  const user: any = await getCurrentUser();
+  const cookieStore = cookies();
+  const user: any = await getCurrentUser(cookieStore);
 
   if (!user) {
     redirect("/login");

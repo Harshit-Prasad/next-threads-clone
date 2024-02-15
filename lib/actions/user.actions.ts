@@ -1,12 +1,13 @@
 "use server";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import User from "@/lib/models/user.model";
 import { connectDB } from "@/lib/db";
 import Thread from "../models/thread.model";
 import { FilterQuery } from "mongoose";
+import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { cookies } from "next/headers";
 
 type SignupParams = {
   username: string;
@@ -32,9 +33,8 @@ type GetUserParams = {
   userId: string;
 };
 
-export async function getCurrentUser() {
+export async function getCurrentUser(cookieStore: ReadonlyRequestCookies) {
   try {
-    const cookieStore = cookies();
     const token = cookieStore.get("token")?.value;
 
     if (!token) {
@@ -113,6 +113,7 @@ export async function login({ email, password }: LoginParams) {
     return {
       message: "Login successful",
       success: true,
+      token,
     };
   } catch (error: any) {
     throw new Error(`Login failed: ${error.message}`);
